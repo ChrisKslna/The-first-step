@@ -1,6 +1,50 @@
 import random
-from asyncio import shield
 from time import sleep
+def Introduce():
+    print("""欢迎来到宝可梦的世界，准备好开启一场酣畅淋漓的对战了吗？\t
+    玩家可以选择三个宝可梦组成队伍与电脑进行对战\t
+    现在游戏中有五种属性，克制关系：水——→草——→火——→电——→光——→水\t
+    尽情玩耍吧！\t""")
+    character_map = input("若要查看角色图鉴 以及 技能效果，请输入:‘map’ \n任意输入可直接开始")
+    # 确保变量互不相等且都在字典中
+    if character_map=="map":
+        print("""
+        属性被动效果：\t
+        1.水属性被动：每回合50%概率，减免30%受到的伤害\t
+        2.草属性被动：每回合回复10%最大生命值血量\t
+        3.火属性被动：对对手造成伤害时，提高10%初始攻击力，最高叠加4层\t
+        4.电属性被动：闪避成功后立即发动一次技能\t
+        5.光属性被动：死亡后可以复活一次并回复50%的最大生命值""")
+        print("""角色图鉴：\t
+        一.水属性角色：\t
+            1.杰尼龟：\t
+              技能1：水枪： *杰尼龟喷射出一股强力的水流，对敌方造成140%水属性伤害\t
+              技能2：护盾： *杰尼龟使用水流形成保护盾，减少50%下一次受到的伤害\t
+        二.草属性角色：\t
+            1.妙蛙种子：\t
+              技能1：种子炸弹： *妙蛙种子发射一颗种子，爆炸后对敌方造成1.0倍攻击力伤害。若击中目标，目标有15%几率陷入“中毒”状态，每回合损失10%生命值,持续2回合\t
+              技能2：寄生种子： *妙蛙种子向对手播种，每回合吸取对手10%的最大生命值并恢复自己, 效果持续3回合\t
+        三.火属性角色：\t
+            1.小火龙：\t
+              技能1：火花： *小火龙发射出一团小火焰，对敌人造成 100% 火属性伤害，并有10%的几率使目标陷入“烧伤”状态，每回合受到10额外伤害， 层数不限\t
+              技能2：蓄能爆炎： *小火龙召唤出强大的火焰，对敌人造成 300% 火属性伤害，并有80%的几率使敌人陷入“烧伤”状态，这个技能需要1个回合的蓄力\t
+                    敌方在面对改技能时闪避率增加 20%\t
+        四.电属性角色：\t
+            1.皮卡丘：\t
+              技能1：十万伏特： *对敌人造成 1.4 倍攻击力的电属性伤害，并有 10% 概率使敌人麻痹，使敌人跳过1回合\t
+              技能2：电光一闪： *对敌人造成1.0倍攻击力的快速攻击，有30%触发第二次攻击\t
+        五.光属性角色：\t
+            1.玛卡巴卡：\t
+              角色被动：玛卡巴卡受到最大伤害不超过5点，且血量小于等于5点时，闪避率提高0.3，死亡复活后进入二阶段\t           
+              技能1：拍手：*回复自身2点生命值 并提高自身5点攻击力(复活后仍继承攻击力)\t
+              技能2：一阶段（复活前）：玛卡巴卡：*造成100%攻击力的光属性伤害\t
+                    二阶段（复活后）：超级玛卡巴卡：*扣除自身5点生命值(最低扣至0.01)，造成200%攻击力的光属性伤害，有30%几率再次发动技能\t
+                    有1%的概率使出技能 玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡.....造成999点伤害\t
+                    """)
+        print(input("若准备好，请输入回车以开始游戏"))
+        print("游戏开始！！！")
+    else:
+        print("游戏开始！！！")
 #Class模块
 class Pokemon:
     def __init__(self, name, HP, max_HP, ATK, initial_ATK, DEF, property, dodge_probability, status):
@@ -79,7 +123,7 @@ class GrassPokemon(Pokemon):
             self.HP += self.max_HP * 0.1
             if self.HP >= self.max_HP:
                 self.HP = self.max_HP
-            print(f"{self.name} 发动草属性被动，回复 {self.max_HP * 0.1} 点（10%最大生命）血量, 当前 {self.name} 的生命值为 {self.HP}")
+            print(f"{self.name} 发动草属性被动，回复 {self.max_HP * 0.1} 点（10%最大生命值）血量, 当前 {self.name} 的生命值为 {self.HP}")
             print()
             sleep(2)
 class FirePokemon(Pokemon):
@@ -105,8 +149,8 @@ class ElectricalPokemon(Pokemon):
             print(f"{self.name} 成功闪避，触发电属性被动，立即发动一次技能")
             sleep(1)
             print()
-            # 这里应该调用用户选择技能的逻辑
-            # UserTerm(self, opponent)
+            # 插入我方回合
+            UserTerm(self, opponent)
             self.dodge_judgement = False
 
     def computer_electrical_passive(self, opponent):
@@ -114,8 +158,8 @@ class ElectricalPokemon(Pokemon):
             print(f"{self.name} 成功闪避，触发电属性被动，立即发动一次技能")
             sleep(1.5)
             print()
-            # 这里应该调用计算机选择技能的逻辑
-            # ComputerTerm(opponent, self)
+            # 插入电脑
+            ComputerTerm(opponent, self)
             self.dodge_judgement = False
 class LightPokemon(Pokemon):
     def __init__(self, name, HP, max_HP, ATK, initial_ATK, DEF, property, dodge_probability, status):
@@ -259,7 +303,13 @@ class Makabaka(LightPokemon):
         self.skill2_str = "超级玛卡巴卡： *扣除自身血量至一定值，造成更高伤害，有一定概率造成极大伤害"
         self.skill1 = self.Makabaka  # 设置技能指向
         self.skill2 = self.SuperMakabaka  # 设置技能指向
-
+        super().__init__(name, HP, max_HP, ATK, initial_ATK, DEF, property, dodge_probability, status)
+        self.skill1_str = "拍手：*回复自身2点生命值 并提高自身5点攻击力"
+        self.skill2_str = ("一阶段（复活前）：玛卡巴卡：*造成100%攻击力的光属性伤害\t\n     "
+                    "二阶段（复活后）：超级玛卡巴卡：*扣除自身5点生命值(最低扣至0.01)，造成200%攻击力的光属性伤害，有30%几率再次发动技能\t\n    "
+                    "有1%的概率使出技能 玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡：*造成999点伤害")
+        self.skill1 = self.Makabaka  # 设置技能指向
+        self.skill2 = self.SuperMakabaka  # 设置技能指向
     def Makabaka(self, opponent):
         self.damage = 0
         opponent.HP = opponent.HP
@@ -278,7 +328,7 @@ class Makabaka(LightPokemon):
             super_maka_ATK = self.ATK
         elif self.count_of_reactivation == 0:
             super_maka_ATK = 0
-            self.HP -= 10
+            self.HP -= 5
             if self.HP <= 0:
                 self.HP = 0.01
             print(f"{self.name} 使用了 超级玛卡巴卡 扣除自身血量至{self.HP} 造成更高伤害")
@@ -310,7 +360,26 @@ charmander2 = Charmander("小火龙[电脑]", 60, 60, 30, 30, 15, "火", 0.15, "
 
 makabaka = Makabaka("玛卡巴卡", 20, 30, 20, 20, 10, "光", 0.2, "None")
 makabaka2 = Makabaka("玛卡巴卡[电脑]", 20, 30, 20, 20, 10, "光", 0.2, "None")
-#必要函数模块
+# 属性被动技能调用函数
+def UseWaterPassive(role, opponent):  # 水属性
+    if role.property == "水":
+        role.water_passive(opponent)
+def UseGrassPassive(role):  # 草属性
+    if role.property == "草":
+        role.grass_passive()
+def UseFirePassive(role, opponent):  # 火属性
+    if role.property == "火":
+        role.fire_passive(opponent)
+def UseUserElectricalPassive(role, opponent):  # 电属性（玩家）
+    if role.property == "电":
+        role.user_electrical_passive(opponent)
+def UseComputerElectricalPassive(role, opponent):  # 电属性（电脑）
+    if role.property == "电":
+        role.computer_electrical_passive(opponent)
+def UseLightPassive(role):  # 光属性
+    if role.property == "光":
+        role.light_passive()
+#回合函数
 def UserTerm(user_chosen_local, computer_chosen_local):
     global user_team, user_chosen_number, user_pokemon_dictionary_str_2, user_chosen
     global computer_team, computer_chosen_number, computer_chosen
@@ -464,6 +533,7 @@ def ComputerTerm(user_chosen_local, computer_chosen_local):
         UseFirePassive(computer_chosen_local, user_chosen_local)
     # 当有一方阵亡时其重新选择角色继续对战
     DeadJudgement(user_chosen_local, computer_chosen_local)
+#判断函数
 def DeadJudgement(user_1_chosen, computer_1_chosen):
     # 死亡判断并重新选择角色
     #死亡判断语句
@@ -578,7 +648,6 @@ def ShieldJudgement(role,opponent):#杰尼龟护盾判断 #上面填电脑 下�
                 opponent.damage=opponent.damage/2
                 role.status_list.remove("SquirtleShield")
                 return True
-
 def ShieldReflect(role,opponent):
     if role.shield_judgement==True:
         if random.random() < 0.5:
@@ -593,34 +662,21 @@ def ShieldReflect(role,opponent):
                 opponent.HP = 0
         role.shield_judgement=False
 
-# 属性被动技能调用函数
-def UseWaterPassive(role, opponent):  # 水属性
-    if role.property == "水":
-        role.water_passive(opponent)
-def UseGrassPassive(role):  # 草属性
-    if role.property == "草":
-        role.grass_passive()
-def UseFirePassive(role, opponent):  # 火属性
-    if role.property == "火":
-        role.fire_passive(opponent)
-def UseUserElectricalPassive(role, opponent):  # 电属性（玩家）
-    if role.property == "电":
-        role.user_electrical_passive(opponent)
-def UseComputerElectricalPassive(role, opponent):  # 电属性（电脑）
-    if role.property == "电":
-        role.computer_electrical_passive(opponent)
-def UseLightPassive(role):  # 光属性
-    if role.property == "光":
-        role.light_passive()
+
+
+
+
+#游戏运行模块
 ########################################################################################################################################
 ########################################################################################################################################
 #角色选择模组#############################################################################################################################
 #设置变量字典：便于赋予变量
+Introduce()
 user_pokemon_dictionary={1:pikachu, 2:bulbasaur, 3:squirtle, 4:charmander, 5:makabaka}
 computer_pokemon_dictionary={1:pikachu2, 2:bulbasaur2, 3:squirtle2, 4:charmander2, 5:makabaka2}
 #玩家选择队伍
-print("""请选择3个宝可梦用于组成你的队伍：
-1.皮卡丘(电属性) 2.妙蛙种子(草属性) 3.杰尼龟(水属性) 4.小火龙(火属性) 5，玛卡巴卡(光属性)\t""")
+print("""1.皮卡丘(电属性) 2.妙蛙种子(草属性) 3.杰尼龟(水属性) 4.小火龙(火属性) 5，玛卡巴卡(光属性)\t
+请选择3个宝可梦用于组成你的队伍：""")
 #设置字符串字典1：便于输出中文名称
 user_pokemon_dictionary_str_1={1:"皮卡丘(电属性)",2:"妙蛙种子(草属性)",3:"杰尼龟(水属性)",4:"小火龙(火属性)",5:"玛卡巴卡(光属性)"}
 computer_pokemon_dictionary_str_1={1:"皮卡丘[电脑](电属性)",2:"妙蛙种子[电脑](草属性)",3:"杰尼龟[电脑](水属性)",4:"小火龙[电脑](火属性)",5:"玛卡巴卡[电脑](光属性)"}
@@ -664,7 +720,7 @@ while computer_team_choice_a==computer_team_choice_b or computer_team_choice_b==
         1.{computer_pokemon_dictionary_str_1[computer_team_choice_a]} 2.{computer_pokemon_dictionary_str_1[computer_team_choice_b]} 3.{computer_pokemon_dictionary_str_1[computer_team_choice_c]}\t""")
     else:
         continue
-print()
+print("克制关系：水——→草——→火——→电——→光——→水")
 ####################设置变量队伍
 user_team={1:user_pokemon_dictionary[user_team_choice_a], 2:user_pokemon_dictionary[user_team_choice_b], 3:user_pokemon_dictionary[user_team_choice_c]}
 computer_team={1:computer_pokemon_dictionary[computer_team_choice_a], 2:computer_pokemon_dictionary[computer_team_choice_b], 3:computer_pokemon_dictionary[computer_team_choice_c]}

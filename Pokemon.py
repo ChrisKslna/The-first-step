@@ -1,4 +1,5 @@
 import random
+from asyncio import shield
 from time import sleep
 #Class模块
 class Pokemon:
@@ -78,8 +79,7 @@ class GrassPokemon(Pokemon):
             self.HP += self.max_HP * 0.1
             if self.HP >= self.max_HP:
                 self.HP = self.max_HP
-            print(
-                f"{self.name} 发动草属性被动，回复 {self.max_HP * 0.1} 点（10%最大生命）血量, 当前 {self.name} 的生命值为 {self.HP}")
+            print(f"{self.name} 发动草属性被动，回复 {self.max_HP * 0.1} 点（10%最大生命）血量, 当前 {self.name} 的生命值为 {self.HP}")
             print()
             sleep(2)
 class FirePokemon(Pokemon):
@@ -89,11 +89,13 @@ class FirePokemon(Pokemon):
 
     def fire_passive(self, opponent):  # dodge为上面定义的函数
         if opponent.dodge_judgement == False and self.damage > 0:
-            self.fire_count += 1
-            if self.fire_count <= 4:
+            while self.fire_count<4:
+                self.fire_count += 1
                 self.ATK += 0.1 * self.initial_ATK
                 print(f"{self.name} 发动火属性被动，提高 {0.1 * self.initial_ATK} 点攻击力(10%初始攻击力，最高叠加4层)")
-                sleep(1)
+                break
+            print(f"{self.name}当前已叠加{self.fire_count}层被动，提高{0.1 * self.initial_ATK * self.fire_count}点攻击力")
+            sleep(1)
 class ElectricalPokemon(Pokemon):
     def __init__(self, name, HP, max_HP, ATK, initial_ATK, DEF, property, dodge_probability, status):
         super().__init__(name, HP, max_HP, ATK, initial_ATK, DEF, property, dodge_probability, status)
@@ -103,7 +105,7 @@ class ElectricalPokemon(Pokemon):
             print(f"{self.name} 成功闪避，触发电属性被动，立即发动一次技能")
             sleep(1)
             print()
-            # 插入玩家回合
+            # 这里应该调用用户选择技能的逻辑
             # UserTerm(self, opponent)
             self.dodge_judgement = False
 
@@ -112,7 +114,7 @@ class ElectricalPokemon(Pokemon):
             print(f"{self.name} 成功闪避，触发电属性被动，立即发动一次技能")
             sleep(1.5)
             print()
-            # 插入电脑回合
+            # 这里应该调用计算机选择技能的逻辑
             # ComputerTerm(opponent, self)
             self.dodge_judgement = False
 class LightPokemon(Pokemon):
@@ -144,7 +146,7 @@ class Pikachu(ElectricalPokemon):
         thunderbolt_damage = thunderbolt_ATK - opponent.DEF
         self.damage = thunderbolt_damage
         if random.random() < 0.1:
-            if not self.dodge(opponent):
+            if opponent.dodge_judgement == False:
                 print(f"雷电降临！！！（10%概率） {self.name} 对对手施加麻痹状态")
                 sleep(1)
                 opponent.status_list.append("Palsy")
@@ -176,7 +178,7 @@ class Bulbasaur(GrassPokemon):
         seed_bomb_damage = seed_bomb_ATK - opponent.DEF
         self.damage = seed_bomb_damage
         if random.random() < 0.15:
-            if not self.dodge(opponent):
+            if opponent.dodge_judgement == False:
                 print(f'{self.name} 对对手施加 “中毒” 状态')
                 sleep(1)
                 opponent.status_list.append("Poisoned")
@@ -186,7 +188,7 @@ class Bulbasaur(GrassPokemon):
         self.damage = 0
         print(f"{self.name} 使用了 寄生种子")
         sleep(1)
-        if not self.dodge(opponent):
+        if opponent.dodge_judgement == False:
             self.status_list.append("ParasiticOpponent")
             self.parasitic_count = 3
 class Squirtle(WaterPokemon):
@@ -225,7 +227,7 @@ class Charmander(FirePokemon):
         ember_damage = ember_ATK - opponent.DEF
         self.damage = ember_damage
         if random.random() < 0.1:
-            if not self.dodge(opponent):
+            if opponent.dodge_judgement == False:
                 print(f'火神庇佑！(10%概率) {self.name} 对对手施加2回合“烧伤”状态')
                 sleep(1)
                 opponent.status_list.append("Burning")
@@ -306,15 +308,14 @@ squirtle2 = Squirtle("杰尼龟[电脑]", 80, 80, 25, 25, 25, "水", 0.2, "None"
 charmander = Charmander("小火龙", 60, 60, 30, 30, 15, "火", 0.15, "None")
 charmander2 = Charmander("小火龙[电脑]", 60, 60, 30, 30, 15, "火", 0.15, "None")
 
-makabaka = Makabaka("玛卡巴卡", 50, 50, 20, 20, 10, "光", 0.2, "None")
-makabaka2 = Makabaka("玛卡巴卡[电脑]", 50, 50, 20, 20, 10, "光", 0.2, "None")
+makabaka = Makabaka("玛卡巴卡", 20, 30, 20, 20, 10, "光", 0.2, "None")
+makabaka2 = Makabaka("玛卡巴卡[电脑]", 20, 30, 20, 20, 10, "光", 0.2, "None")
 #必要函数模块
 def UserTerm(user_chosen_local, computer_chosen_local):
     global user_team, user_chosen_number, user_pokemon_dictionary_str_2, user_chosen
     global computer_team, computer_chosen_number, computer_chosen
     ##### 我方回合
-    print(
-        f"{user_chosen_local.name}的技能为：\n    1.{user_chosen_local.skill1_str}\n    2.{user_chosen_local.skill2_str}")
+    print(f"{user_chosen_local.name}的技能为：\n    1.{user_chosen_local.skill1_str}\n    2.{user_chosen_local.skill2_str}")
     user_chosen_local.skill_dict = {1: user_chosen_local.skill1, 2: user_chosen_local.skill2}
     while True:
         try:
@@ -363,21 +364,24 @@ def UserTerm(user_chosen_local, computer_chosen_local):
     else:
         ####### 判断属性克制对伤害的影响
         user_chosen_local.restrain(computer_chosen_local)
+        # 玛卡巴卡被动：受到技能伤害不超过10
+        if computer_chosen_local == makabaka2 and user_chosen_local.damage > 10:
+            user_chosen_local.damage = 10
         # 水属性被动判断——判断伤害减免
         UseWaterPassive(computer_chosen_local, user_chosen_local)
         # 判断杰尼龟技能
+        computer_chosen_local.shield_judgement=ShieldJudgement(computer_chosen_local, user_chosen_local)
         ShieldJudgement(computer_chosen_local, user_chosen_local)
-        # 玛卡巴卡被动：受到技能伤害不超过5
-        if computer_chosen_local == makabaka2 and user_chosen_local.damage > 10:
-            user_chosen_local.damage = 10
         ######### 输出伤害文字
         print(f"{user_chosen_local.name} 对 {computer_chosen_local.name} 造成了 {user_chosen_local.damage} 点伤害 ")
+        ShieldReflect(computer_chosen_local, user_chosen_local)
         sleep(1)
 
         ####### 计算对手剩余血量
         computer_chosen_local.HP = computer_chosen_local.HP - user_chosen_local.damage
         if computer_chosen_local.HP <= 0:
             computer_chosen_local.HP = 0
+        print(f"{user_chosen_local.name}剩余HP:{user_chosen_local.HP}")
         print(f"{computer_chosen_local.name}剩余HP:{computer_chosen_local.HP}")
         sleep(0.8)
         print()
@@ -391,8 +395,7 @@ def ComputerTerm(user_chosen_local, computer_chosen_local):
     global user_team, user_chosen_number, user_pokemon_dictionary_str_2, user_chosen
     global computer_team, computer_chosen_number, computer_chosen
     ##### 敌方回合
-    print(
-        f"{computer_chosen_local.name}的技能为：\n    1.{computer_chosen_local.skill1_str}\n    2.{computer_chosen_local.skill2_str}")
+    print(f"{computer_chosen_local.name}的技能为：\n    1.{computer_chosen_local.skill1_str}\n    2.{computer_chosen_local.skill2_str}")
     computer_chosen_local.skill_dict = {1: computer_chosen_local.skill1, 2: computer_chosen_local.skill2}
     sleep(1)
     computer_skill_number = random.randint(1, 2)
@@ -435,20 +438,24 @@ def ComputerTerm(user_chosen_local, computer_chosen_local):
     else:
         ######### 判断属性克制对伤害的影响
         computer_chosen_local.restrain(user_chosen_local)
+        # 玛卡巴卡被动：受到技能伤害不超过10
+        if user_chosen_local == makabaka and computer_chosen_local.damage > 10:
+            computer_chosen_local.damage = 10
         # 水属性被动判断——判断伤害减免
         UseWaterPassive(user_chosen_local, computer_chosen_local)
         # 判断杰尼龟技能
+        user_chosen_local.shield_judgement=ShieldJudgement(user_chosen_local, computer_chosen_local)
         ShieldJudgement(user_chosen_local, computer_chosen_local)
-        # 玛卡巴卡被动：受到技能伤害不超过5
-        if user_chosen_local == makabaka and computer_chosen_local.damage > 10:
-            computer_chosen_local.damage = 10
         print(f"{computer_chosen_local.name} 对 {user_chosen_local.name} 造成了 {computer_chosen_local.damage} 点伤害 ")
+        ShieldReflect(user_chosen_local, computer_chosen_local)
         sleep(1)
         ######### 计算我方剩余血量
         user_chosen_local.HP = user_chosen_local.HP - computer_chosen_local.damage
         if user_chosen_local.HP <= 0:
             user_chosen_local.HP = 0
         print(f"{user_chosen_local.name}剩余HP:{user_chosen_local.HP}")
+        print(f"{computer_chosen_local.name}剩余HP:{computer_chosen_local.HP}")
+
         sleep(0.8)
         print()
         # 光属性被动判断——判断复活
@@ -569,8 +576,22 @@ def ShieldJudgement(role,opponent):#杰尼龟护盾判断 #上面填电脑 下�
                 print(f"{role.name}的护盾成功抵挡50%{opponent.name}的伤害 护盾解除")
                 sleep(1)
                 opponent.damage=opponent.damage/2
-
                 role.status_list.remove("SquirtleShield")
+                return True
+
+def ShieldReflect(role,opponent):
+    if role.shield_judgement==True:
+        if random.random() < 0.5:
+            if random.random() < 0.4:
+                shield_damage = opponent.damage * 2  # 20%概率弹反2倍受到的伤害
+                print(f"{role.name}成功弹反2倍受到的伤害（20%概率），对{opponent.name}造成{shield_damage}点伤害")
+            else:
+                shield_damage = opponent.damage  # 50%概率弹反1倍受到的伤害
+                print(f"{role.name}成功弹反1倍受到的伤害（50%概率），对{opponent.name}造成{shield_damage}点伤害")
+            opponent.HP -= shield_damage
+            if opponent.HP < 0:
+                opponent.HP = 0
+        role.shield_judgement=False
 
 # 属性被动技能调用函数
 def UseWaterPassive(role, opponent):  # 水属性
@@ -600,7 +621,6 @@ computer_pokemon_dictionary={1:pikachu2, 2:bulbasaur2, 3:squirtle2, 4:charmander
 #玩家选择队伍
 print("""请选择3个宝可梦用于组成你的队伍：
 1.皮卡丘(电属性) 2.妙蛙种子(草属性) 3.杰尼龟(水属性) 4.小火龙(火属性) 5，玛卡巴卡(光属性)\t""")
-print("克制关系：水——→草——→火——→电——→光——→水")
 #设置字符串字典1：便于输出中文名称
 user_pokemon_dictionary_str_1={1:"皮卡丘(电属性)",2:"妙蛙种子(草属性)",3:"杰尼龟(水属性)",4:"小火龙(火属性)",5:"玛卡巴卡(光属性)"}
 computer_pokemon_dictionary_str_1={1:"皮卡丘[电脑](电属性)",2:"妙蛙种子[电脑](草属性)",3:"杰尼龟[电脑](水属性)",4:"小火龙[电脑](火属性)",5:"玛卡巴卡[电脑](光属性)"}
@@ -725,3 +745,8 @@ while len(user_team) > 0 and len(computer_team) > 0:
             # 若全体阵亡 则退出循环
             if len(user_team) == 0 or len(computer_team) == 0:
                 break
+#循环结束判断胜负
+if len(user_team)==0:
+    print("您队伍的成员已全部阵亡，很遗憾您输掉了此次对战，下次努力！！！")
+elif len(computer_team)==0:
+    print("电脑队伍的成员已全部阵亡，恭喜您获得了对战胜利，再接再厉！！！")

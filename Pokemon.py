@@ -19,7 +19,7 @@ def Introduce():
         一.水属性角色：\t
             1.杰尼龟：\t
               技能1：水枪： *杰尼龟喷射出一股强力的水流，对敌方造成140%水属性伤害\t
-              技能2：护盾： *杰尼龟使用水流形成保护盾，减少50%下一次受到的伤害\t
+              技能2：护盾： *杰尼龟使用水流形成保护盾，减少50%下一次受到的伤害，可叠加\t
         二.草属性角色：\t
             1.妙蛙种子：\t
               技能1：种子炸弹： *妙蛙种子发射一颗种子，爆炸后对敌方造成1.0倍攻击力伤害。若击中目标，目标有15%几率陷入“中毒”状态，每回合损失10%生命值,持续2回合\t
@@ -239,7 +239,7 @@ class Squirtle(WaterPokemon):
     def __init__(self, name, HP, max_HP, ATK, initial_ATK, DEF, property, dodge_probability, status):
         super().__init__(name, HP, max_HP, ATK, initial_ATK, DEF, property, dodge_probability, status)
         self.skill1_str = "水枪： *杰尼龟喷射出一股强力的水流，对敌方造成140%水属性伤害"
-        self.skill2_str = "护盾： *杰尼龟使用水流形成保护盾，减少50%下一次受到的伤害"
+        self.skill2_str = "护盾： *杰尼龟使用水流形成保护盾，减少50%下一次受到的伤害，可叠加"
         self.skill1 = self.AquaJet  # 设置技能指向
         self.skill2 = self.Shield  # 设置技能指向
 

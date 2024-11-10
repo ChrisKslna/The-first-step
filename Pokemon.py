@@ -180,10 +180,10 @@ class Pikachu(ElectricalPokemon):
         super().__init__(name, HP, max_HP, ATK, initial_ATK, DEF, property, dodge_probability, status)
         self.skill1_str = "十万伏特： *对敌人造成 1.4 倍攻击力的电属性伤害，并有 10% 概率使敌人麻痹(使敌人跳过1回合)"
         self.skill2_str = "电光一闪： *对敌人造成1.0倍攻击力的快速攻击，有30%触发第二次攻击"
-        self.skill1 = self.Thunderbolt  # 设置技能指向
-        self.skill2 = self.QuickAttack   # 设置技能指向
+        self.skill1 = self.thunderbolt  # 设置技能指向
+        self.skill2 = self.quick_attack   # 设置技能指向
 
-    def Thunderbolt(self, opponent):
+    def thunderbolt(self, opponent):
         print(f"{self.name} 使用了 十万伏特")
         sleep(1)
         thunderbolt_ATK = 1.4 * self.ATK
@@ -196,7 +196,7 @@ class Pikachu(ElectricalPokemon):
                 opponent.status_list.append("Palsy")
                 opponent.palsy_count = 1
 
-    def QuickAttack(self, opponent):
+    def quick_attack(self, opponent):
         print(f"{self.name} 使用了 电光一闪")
         sleep(1)
         quick_attack_ATK = self.ATK
@@ -212,10 +212,10 @@ class Bulbasaur(GrassPokemon):
         super().__init__(name, HP, max_HP, ATK, initial_ATK, DEF, property, dodge_probability, status)
         self.skill1_str = "种子炸弹： *妙蛙种子发射一颗种子，爆炸后对敌方造成1.0倍攻击力伤害。若击中目标，目标有15%几率陷入“中毒”状态，每回合损失10%生命值,持续2回合"
         self.skill2_str = "寄生种子： *妙蛙种子向对手播种，每回合吸取对手10%的最大生命值并恢复自己, 效果持续3回合"
-        self.skill1 = self.SeedBomb  # 设置技能指向
-        self.skill2 = self.ParasiticSeeds  # 设置技能指向
+        self.skill1 = self.seed_bomb  # 设置技能指向
+        self.skill2 = self.parasitic_seeds  # 设置技能指向
 
-    def SeedBomb(self, opponent):
+    def seed_bomb(self, opponent):
         print(f"{self.name} 使用了 种子炸弹")
         sleep(1)
         seed_bomb_ATK = self.ATK
@@ -228,7 +228,7 @@ class Bulbasaur(GrassPokemon):
                 opponent.status_list.append("Poisoned")
                 opponent.poisoned_count = 2
 
-    def ParasiticSeeds(self, opponent):
+    def parasitic_seeds(self, opponent):
         self.damage = 0
         print(f"{self.name} 使用了 寄生种子")
         sleep(1)
@@ -240,17 +240,17 @@ class Squirtle(WaterPokemon):
         super().__init__(name, HP, max_HP, ATK, initial_ATK, DEF, property, dodge_probability, status)
         self.skill1_str = "水枪： *杰尼龟喷射出一股强力的水流，对敌方造成140%水属性伤害"
         self.skill2_str = "护盾： *杰尼龟使用水流形成保护盾，减少50%下一次受到的伤害，可叠加"
-        self.skill1 = self.AquaJet  # 设置技能指向
-        self.skill2 = self.Shield  # 设置技能指向
+        self.skill1 = self.aqua_jet  # 设置技能指向
+        self.skill2 = self.shield  # 设置技能指向
 
-    def AquaJet(self, opponent):
+    def aqua_jet(self, opponent):
         print(f"{self.name} 使用了 水枪")
         sleep(1)
         aqua_jet_ATK = 1.4 * self.ATK
         aqua_jet_damage = aqua_jet_ATK - opponent.DEF
         self.damage = aqua_jet_damage
 
-    def Shield(self, opponent):
+    def shield(self, opponent):
         self.damage = 0
         print(f"{self.name} 使用了 护盾")
         sleep(1)
@@ -261,10 +261,10 @@ class Charmander(FirePokemon):
         super().__init__(name, HP, max_HP, ATK, initial_ATK, DEF, property, dodge_probability, status)
         self.skill1_str = "火花： *小火龙发射出一团小火焰，对敌人造成 100% 火属性伤害，并有10%的几率使目标陷入“烧伤”状态（每回合受到10额外伤害， 层数可无限叠加）"
         self.skill2_str = "蓄能爆炎： *小火龙召唤出强大的火焰，对敌人造成 300% 火属性伤害，并有80%的几率使敌人陷入“烧伤”状态，这个技能需要1个回合的蓄力，并且在面对改技能时敌方闪避率增加 20%"
-        self.skill1 = self.Ember  # 设置技能指向
-        self.skill2 = self.FlameCharge  # 设置技能指向
+        self.skill1 = self.ember  # 设置技能指向
+        self.skill2 = self.flame_charge  # 设置技能指向
 
-    def Ember(self, opponent):
+    def ember(self, opponent):
         print(f"{self.name} 使用了 火花")
         sleep(1)
         ember_ATK = self.ATK
@@ -277,7 +277,7 @@ class Charmander(FirePokemon):
                 opponent.status_list.append("Burning")
                 opponent.burning_count += 2
 
-    def FlameCharge(self, opponent):
+    def flame_charge(self, opponent):
         flame_charge_damage = 0
         if self.flame_charge_status == "Preparation":
             print(f"{self.name} 蓄力完成 发动技能 蓄能爆炎")
@@ -299,18 +299,13 @@ class Charmander(FirePokemon):
 class Makabaka(LightPokemon):
     def __init__(self, name, HP, max_HP, ATK, initial_ATK, DEF, property, dodge_probability, status):
         super().__init__(name, HP, max_HP, ATK, initial_ATK, DEF, property, dodge_probability, status)
-        self.skill1_str = "拍手： *提高自身血量和攻击力"
-        self.skill2_str = "超级玛卡巴卡： *扣除自身血量至一定值，造成更高伤害，有一定概率造成极大伤害"
-        self.skill1 = self.Makabaka  # 设置技能指向
-        self.skill2 = self.SuperMakabaka  # 设置技能指向
-        super().__init__(name, HP, max_HP, ATK, initial_ATK, DEF, property, dodge_probability, status)
         self.skill1_str = "拍手：*回复自身2点生命值 并提高自身5点攻击力"
         self.skill2_str = ("一阶段（复活前）：玛卡巴卡：*造成100%攻击力的光属性伤害\t\n     "
                     "二阶段（复活后）：超级玛卡巴卡：*扣除自身5点生命值(最低扣至0.01)，造成200%攻击力的光属性伤害，有30%几率再次发动技能\t\n    "
                     "有1%的概率使出技能 玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡玛卡巴卡：*造成999点伤害")
-        self.skill1 = self.Makabaka  # 设置技能指向
-        self.skill2 = self.SuperMakabaka  # 设置技能指向
-    def Makabaka(self, opponent):
+        self.skill1 = self.makabaka  # 设置技能指向
+        self.skill2 = self.super_makabaka  # 设置技能指向
+    def makabaka(self, opponent):
         self.damage = 0
         opponent.HP = opponent.HP
         self.HP += 2
@@ -320,7 +315,7 @@ class Makabaka(LightPokemon):
         print(f"{self.name} 血量{self.HP} 攻击力{self.ATK}")
         sleep(1)
 
-    def SuperMakabaka(self, opponent):
+    def super_makabaka(self, opponent):
         super_maka_ATK = 0
         if self.count_of_reactivation == 1:
             print(f"{self.name} 使用了 玛卡巴卡")
@@ -397,7 +392,7 @@ def UserTerm(user_chosen_local, computer_chosen_local):
             print("输入无效 请重新输入")
     ##### 判断是否闪避概率增加 （小火龙技能、玛卡巴卡被动）
     # 小火龙技能
-    if user_chosen_local.skill == charmander.FlameCharge and user_chosen_local.flame_charge_status == "Preparation":
+    if user_chosen_local.skill == charmander.flame_charge and user_chosen_local.flame_charge_status == "Preparation":
         print(f"{computer_chosen_local.name} 即将面对蓄能爆炎 闪避率增加20%")
         sleep(1)
         computer_chosen_local.dodge_probability += 0.2
@@ -412,7 +407,7 @@ def UserTerm(user_chosen_local, computer_chosen_local):
     computer_chosen_local.dodge_judgement = computer_chosen_local.dodge()
     ##### 闪避概率重置（小火龙技能、玛卡巴卡被动）
     # 小火龙闪避重置
-    if user_chosen_local.skill == charmander.FlameCharge and user_chosen_local.flame_charge_status == "Preparation":
+    if user_chosen_local.skill == charmander.flame_charge and user_chosen_local.flame_charge_status == "Preparation":
         computer_chosen_local.dodge_probability -= 0.2
     # 玛卡巴卡闪避重置
     if computer_chosen_local == makabaka2 and computer_chosen_local.HP <= 5:
@@ -471,7 +466,7 @@ def ComputerTerm(user_chosen_local, computer_chosen_local):
     computer_chosen_local.skill = computer_chosen_local.skill_dict[computer_skill_number]
     ##### 判断是否闪避概率增加 （小火龙技能、玛卡巴卡被动）
     # 小火龙技能
-    if computer_chosen_local.skill == charmander2.FlameCharge and computer_chosen_local.flame_charge_status == "Preparation":
+    if computer_chosen_local.skill == charmander2.flame_charge and computer_chosen_local.flame_charge_status == "Preparation":
         user_chosen_local.dodge_probability += 0.2
         print(f"{user_chosen_local.name} 即将面对蓄能爆炎 闪避率增加20%")
         sleep(1)
@@ -486,7 +481,7 @@ def ComputerTerm(user_chosen_local, computer_chosen_local):
     user_chosen_local.dodge_judgement = user_chosen_local.dodge()
     ##### 闪避概率重置（小火龙技能、玛卡巴卡被动）
     # 小火龙闪避重置
-    if computer_chosen_local.skill == charmander2.FlameCharge and computer_chosen_local.flame_charge_status == "Preparation":
+    if computer_chosen_local.skill == charmander2.flame_charge and computer_chosen_local.flame_charge_status == "Preparation":
         user_chosen_local.dodge_probability -= 0.2
     # 玛卡巴卡闪避重置
     if user_chosen_local == makabaka and user_chosen_local.HP <= 5:
@@ -661,10 +656,6 @@ def ShieldReflect(role,opponent):
             if opponent.HP < 0:
                 opponent.HP = 0
         role.shield_judgement=False
-
-
-
-
 
 #游戏运行模块
 ########################################################################################################################################
